@@ -147,7 +147,6 @@
     <p>Upload any PDF — IRA will summarize it and quiz you on the content instantly.</p>
   </div>
 
-  <!-- UPLOAD -->
   <div id="screen-upload" class="screen active">
     <div class="upload-zone" id="uploadZone">
       <input type="file" id="fileInput" accept=".pdf" />
@@ -165,28 +164,19 @@
     <div class="features-row">
       <div class="feature-card">
         <div class="ficon p">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c6ff7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c6ff7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
         <div><h3>AI Summary</h3><p>Key ideas from your document in one clear read</p></div>
       </div>
       <div class="feature-card">
         <div class="ficon g">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2d9b6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="9 11 12 14 22 4"/>
-            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2d9b6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
         </div>
         <div><h3>10-Question Quiz</h3><p>Answer MCQs and get your score instantly</p></div>
       </div>
     </div>
   </div>
 
-  <!-- LOADING -->
   <div id="screen-loading" class="screen">
     <div class="loading-card">
       <div class="spinner"></div>
@@ -194,14 +184,13 @@
       <p style="font-size:14px;color:var(--text-muted)">This usually takes 10–20 seconds</p>
       <div class="loading-steps">
         <div class="lstep" id="step1"><div class="ldot"></div>Extracting text from PDF</div>
-        <div class="lstep" id="step2"><div class="ldot"></div>Sending to AI (Groq Llama)</div>
+        <div class="lstep" id="step2"><div class="ldot"></div>Sending to AI</div>
         <div class="lstep" id="step3"><div class="ldot"></div>Writing your summary</div>
         <div class="lstep" id="step4"><div class="ldot"></div>Generating quiz questions</div>
       </div>
     </div>
   </div>
 
-  <!-- RESULTS -->
   <div id="screen-results" class="screen">
     <div class="results-hdr">
       <div class="file-pill">
@@ -269,10 +258,9 @@
 
 <script>
 // ============================================================
-// 👇 STEP 1: Replace this with your FREE Groq key
-//    Get it here (no card needed): https://console.groq.com
+//  👇 REPLACE THIS WITH YOUR KEY — get free at console.groq.com
 // ============================================================
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = "YOUR_GROQ_KEY_HERE";
 // ============================================================
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -280,10 +268,8 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 let questions = [], answers = [], curQ = 0, pageCount = 0;
 
-// ── UPLOAD ───────────────────────────────────────────────────
 const fileInput = document.getElementById('fileInput');
 const uploadZone = document.getElementById('uploadZone');
-
 fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
@@ -293,7 +279,6 @@ uploadZone.addEventListener('drop', e => {
   if (f && f.type === 'application/pdf') handleFile(f);
 });
 
-// ── HELPERS ──────────────────────────────────────────────────
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -307,7 +292,6 @@ function setStep(n) {
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-// ── PDF EXTRACTION ───────────────────────────────────────────
 async function extractText(file) {
   const buf = await file.arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
@@ -319,32 +303,28 @@ async function extractText(file) {
     const content = await page.getTextContent();
     text += content.items.map(x => x.str).join(' ') + '\n';
   }
-  return text.slice(0, 10000);
+  return text.slice(0, 8000);
 }
 
-// ── MAIN FLOW ────────────────────────────────────────────────
 async function handleFile(file) {
   if (GROQ_API_KEY === "YOUR_GROQ_KEY_HERE") {
-    alert("⚠️ Please open this HTML file and replace YOUR_GROQ_KEY_HERE with your actual Groq API key.\n\nGet one free at: https://console.groq.com");
+    alert("Please open study-mode.html in a text editor and replace YOUR_GROQ_KEY_HERE with your actual Groq key.\n\nGet one free (no card) at: https://console.groq.com");
     return;
   }
   document.getElementById('displayFileName').textContent = file.name;
   showScreen('screen-loading'); setStep(1);
-
   let pdfText = '';
   try {
     pdfText = await extractText(file);
     if (pdfText.trim().length < 80)
-      throw new Error('Could not extract text from this PDF.\nMake sure it is a text-based PDF — not a scanned image.');
+      throw new Error('Could not extract text from this PDF.\nMake sure it is not a scanned image PDF.');
   } catch (err) { showError(err.message); return; }
 
   setStep(2);
   document.getElementById('loadingTitle').textContent = 'AI is thinking…';
-
   try {
-    const result = await callGroq(pdfText);
-    setStep(3); await sleep(400);
-    setStep(4); await sleep(400);
+    const result = await callAI(pdfText);
+    setStep(3); await sleep(350); setStep(4); await sleep(350);
     document.getElementById('summaryText').textContent = result.summary;
     questions = result.questions.slice(0, 10);
     answers = new Array(questions.length).fill(null);
@@ -354,30 +334,71 @@ async function handleFile(file) {
   } catch (err) { showError(err.message); }
 }
 
-// ── GROQ API ─────────────────────────────────────────────────
-async function callGroq(text) {
-  const prompt = `You are an expert academic assistant. Analyse this PDF content and do two things:
-
-1. Write a clear summary (~300 words) covering the main topic, key concepts and important takeaways. Flowing paragraphs only, no bullet points.
-2. Create exactly 10 multiple-choice questions that test comprehension. Each must have 4 options and 1 correct answer.
-
-PDF content:
----
-${text}
----
-
-IMPORTANT: Return ONLY raw valid JSON — no markdown, no backticks, no explanation before or after.
-
-Format:
-{
-  "summary": "...",
-  "questions": [
-    { "question": "...", "options": ["A","B","C","D"], "correct": 0 }
-  ]
+// Bulletproof JSON extractor — tries 4 strategies
+function parseJSON(raw) {
+  // 1. Direct
+  try { return JSON.parse(raw); } catch {}
+  // 2. Strip markdown fences
+  const s = raw.replace(/^```(?:json)?/gm, '').replace(/^```/gm, '').trim();
+  try { return JSON.parse(s); } catch {}
+  // 3. Extract first {...} block
+  const start = raw.indexOf('{'), end = raw.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(raw.slice(start, end + 1)); } catch {}
+  }
+  // 4. Give up
+  throw new Error('Could not parse AI response. Please try again.');
 }
 
-"correct" is 0-based index (0=A, 1=B, 2=C, 3=D). Generate exactly 10 questions.`;
+async function callAI(text) {
+  // TWO separate calls — summary first, then quiz
+  // This avoids the large JSON format issues
+  const summaryRes = await groqCall(
+    `Summarize the following text in 250-300 words. Write clear flowing paragraphs. No bullet points. Return ONLY the summary text, nothing else.\n\nText:\n${text}`
+  );
+  const summary = summaryRes.trim();
 
+  const quizRes = await groqCall(
+    `Based on this text, create 10 multiple choice questions to test understanding.
+
+Text:
+${text.slice(0, 6000)}
+
+Return ONLY a JSON array of exactly 10 objects. Each object must have:
+- "question": the question string
+- "options": array of exactly 4 answer strings
+- "correct": number 0-3 (index of correct option)
+
+Example: [{"question":"What is X?","options":["A","B","C","D"],"correct":2}]
+
+Return ONLY the JSON array. No explanation, no markdown.`
+  );
+
+  let questionsArr;
+  // Try to parse as array or as object with questions key
+  const raw = quizRes.trim();
+  try {
+    const parsed = parseJSON(raw);
+    if (Array.isArray(parsed)) {
+      questionsArr = parsed;
+    } else if (parsed.questions) {
+      questionsArr = parsed.questions;
+    } else {
+      // maybe it's wrapped in an array string inside
+      const arrStart = raw.indexOf('['), arrEnd = raw.lastIndexOf(']');
+      questionsArr = JSON.parse(raw.slice(arrStart, arrEnd + 1));
+    }
+  } catch {
+    throw new Error('AI returned invalid quiz format. Please try again.');
+  }
+
+  if (!Array.isArray(questionsArr) || questionsArr.length < 5)
+    throw new Error('AI returned too few questions. Please try again.');
+
+  return { summary, questions: questionsArr };
+}
+
+async function groqCall(userMessage) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -386,35 +407,21 @@ Format:
     },
     body: JSON.stringify({
       model: 'llama-3.3-70b-versatile',
-      max_tokens: 3000,
-      temperature: 0.4,
-      messages: [{ role: 'user', content: prompt }]
+      max_tokens: 2000,
+      temperature: 0.3,
+      messages: [{ role: 'user', content: userMessage }]
     })
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    const msg = err.error?.message || '';
-    if (res.status === 401) throw new Error('Invalid Groq API key.\nDouble-check the key you pasted in the code.');
+    if (res.status === 401) throw new Error('Invalid Groq API key. Check the key in your code.');
     if (res.status === 429) throw new Error('Rate limit hit. Wait a few seconds and try again.');
-    throw new Error(msg || `Groq API error (${res.status}). Try again.`);
+    throw new Error(err.error?.message || `Groq error ${res.status}`);
   }
-
   const data = await res.json();
-  const raw = data.choices?.[0]?.message?.content || '';
-  const cleaned = raw.replace(/```json|```/g, '').trim();
-
-  let parsed;
-  try { parsed = JSON.parse(cleaned); }
-  catch { throw new Error('AI returned an unexpected format. Please try again.'); }
-
-  if (!parsed.summary || !Array.isArray(parsed.questions) || parsed.questions.length < 5)
-    throw new Error('Incomplete response from AI. Please try again.');
-
-  return parsed;
+  return data.choices?.[0]?.message?.content || '';
 }
 
-// ── QUIZ ─────────────────────────────────────────────────────
 function renderQ(i) {
   curQ = i; const q = questions[i]; const total = questions.length;
   document.getElementById('qnum').textContent = `Question ${i + 1} of ${total}`;
