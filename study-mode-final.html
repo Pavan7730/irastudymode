@@ -260,7 +260,7 @@
 // ============================================================
 //  👇 REPLACE THIS WITH YOUR KEY — get free at console.groq.com
 // ============================================================
-const GROQ_API_KEY = "gsk_Beir8f1cA6lWNqRFHpHSWGdyb3FY9yeUmi2ZGuVJqOzMdFz4jERjE";
+const GROQ_API_KEY = "YOUR_GROQ_KEY_HERE";
 // ============================================================
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
@@ -399,7 +399,7 @@ Return ONLY the JSON array. No explanation, no markdown.`
 }
 
 async function groqCall(userMessage) {
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  const res = await fetch('https://corsproxy.io/?url=https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
